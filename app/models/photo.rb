@@ -9,6 +9,8 @@ class Photo < ActiveRecord::Base
   validates :title, uniqueness: true
   validates :image, presence: true
   
+  scope :recent, joins(:album => :user).select("photos.*, albums.id as album_id, albums.name as album_name, users.first_name as users_first_name, users.last_name as users_last_name").last(25)
+  
   def max_images_count
     errors[:base] << "Images count can not exceed 25 for an album." if album.images_count >= 25
   end

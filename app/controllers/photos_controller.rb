@@ -2,37 +2,44 @@ class PhotosController < ApplicationController
   before_filter :authenticate_user!
   
   def new
-    @photo = Photo.new(:album_id => params[:album_id])
+    @photo = current_user.albums.where(:id => params[:album_id]).first.photos.new
+    redirect_to root_path, :flash => {:notice => "Record not found."} if @photo.blank?
   end
 
   def create
-    @photo = Photo.new(params[:photo])
-    if @photo.save
-      flash[:notice] = "Successfully created photo."
-      redirect_to @photo.album
+    # first check if album is available
+    album = current_user.albums.where(:id => params[:photo][:album_id]).first
+    if album.present?
+      @photo = album.photos.new(params[:photo])
+      if @photo.save
+        flash[:notice] = "Successfully created photo."
+        redirect_to @photo.album
+      else
+        render :action => 'new'
+      end
     else
-      render :action => 'new'
+      redirect_to root_path, :flash => {:notice => "Error while creating a photo"}
     end
   end
 
   def edit
-    @photo = Photo.find(params[:id])
+    @photo = current_user.photos.find(params[:id])
+    redirect_to root_path, :flash => {:notice => "Record not found."} if @photo.blank?
   end
 
   def update
-    @photo = Photo.find(params[:id])
-    if @photo.update_attributes(params[:photo])
+    photo = current_user.photos.find(params[:id])
+    if photo.present? and photo.update_attributes(params[:photo])
       flash[:notice] = "Successfully updated photo."
-      redirect_to @photo.album
+      redirect_to photo.album
     else
       render :action => 'edit'
     end
   end
 
   def destroy
-    @photo = Photo.find(params[:id])
-    @photo.destroy
-    flash[:notice] = "Successfully destroyed photo."
-    redirect_to @photo.album
+    photo = current_user.photos.where(:id => params[:id]).first
+    flash[:notice] = photo.try(:destroy) ? "Successfully destroyed photo." : "Could'nt find photo with ID #{params[:id]}"
+    redirect_to photo.album
   end
 end
