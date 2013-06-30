@@ -25,4 +25,6 @@ Gems used:
 
 	* All the non existing urls are redirected to the root page
 	* Callback and validation confirm that there can be only 25 uploads for an album.
+	* Eager loading and joins have been taken care of.
+	* Authentication and security vise checks have been made that correct user saves correct data.
 
