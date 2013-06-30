@@ -1,0 +1,15 @@
+<div id="photos">
+  <% for photo in @photos %>
+    <div class="painting">
+      <div class="name"><%= photo.title %></div>
+      <a href="<%= photo.image %>"><%= image_tag photo.image_url(:thumb) if photo.image? %></a>
+      <div class="actions">
+		  <ul>
+		  	<li>Album : <%= link_to photo.album_name, album_path(photo.album_id) %></li>
+		  	<li>User: <%= photo.users_first_name.to_s + ' ' + photo.users_last_name.to_s %></li>
+			<li> Created on : <%= photo.created_at.strftime("%d-%m-%Y") %>			
+      </div>
+    </div>
+  <% end %>
+  <div class="clear"></div>
+</div>
