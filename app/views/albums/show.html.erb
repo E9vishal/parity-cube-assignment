@@ -33,7 +33,7 @@
       <%= image_tag photo.image_url(:thumb) if photo.image? %>
       <div class="name"><%= photo.title %></div>
       <div class="actions">
-		<% if user_signed_in? %>
+		<% if user_signed_in? and current_user.email == @album.user.email %>
         <%= link_to "edit", edit_photo_path(photo) %> |
         <%= link_to "remove", photo, :confirm => 'Are you sure?', :method => :delete %>
 		<% end %>

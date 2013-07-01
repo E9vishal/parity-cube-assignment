@@ -23,7 +23,7 @@ class PhotosController < ApplicationController
   end
 
   def edit
-    @photo = current_user.photos.find(params[:id])
+    @photo = current_user.photos.where(:id => params[:id]).first
     redirect_to root_path, :flash => {:notice => "Record not found."} if @photo.blank?
   end
 
@@ -39,7 +39,12 @@ class PhotosController < ApplicationController
 
   def destroy
     photo = current_user.photos.where(:id => params[:id]).first
-    flash[:notice] = photo.try(:destroy) ? "Successfully destroyed photo." : "Could'nt find photo with ID #{params[:id]}"
-    redirect_to photo.album
+    if photo.try(:destroy)
+      flash[:notice] = "Successfully destroyed photo"
+      redirect_to photo.album
+    else
+      flash[:notice] = "Could'nt find photo with ID #{params[:id]}"
+      redirect_to root_url
+    end
   end
 end
